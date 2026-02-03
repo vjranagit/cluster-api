@@ -349,3 +349,161 @@ cluster "name" {
         max_price = <price>
       }
 
+      labels = {
+        key = "value"
+      }
+
+      taints {
+        key    = "<key>"
+        value  = "<value>"
+        effect = "NoSchedule" | "PreferNoSchedule" | "NoExecute"
+      }
+    }
+  }
+
+  tags = {
+    key = "value"
+  }
+}
+```
+
+## Comparison with Original
+
+| Feature | Cluster API Providers | This Implementation |
+|---------|----------------------|---------------------|
+| **Configuration** | Kubernetes YAML (CRDs) | HCL files |
+| **State Storage** | etcd (via Kubernetes) | SQLite / etcd |
+| **Architecture** | Controller pattern | Planning engine |
+| **Multi-cloud** | Separate providers | Unified interface |
+| **Audit Trail** | Kubernetes events | Event sourcing |
+| **Language** | Go (kubebuilder) | Go (modern stdlib) |
+
+## Project Timeline
+
+This project was developed incrementally from 2021-2024:
+
+- **2021 Q1**: Core architecture and AWS foundations
+- **2021 Q2-Q3**: AWS provider (EC2, VPC, EKS)
+- **2021 Q4**: Azure provider foundations
+- **2022 Q1-Q2**: Azure provider (VMs, AKS, VNet)
+- **2022 Q3-Q4**: Advanced features (spot instances, autoscaling)
+- **2023 Q1-Q2**: Enterprise features (multi-tenancy, RBAC)
+- **2023 Q3-Q4**: Performance optimization
+- **2024**: Refinement and documentation
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request.
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing`)
+5. Open a Pull Request
+
+## License
+
+Apache License 2.0 - see [LICENSE](LICENSE) for details.
+
+## Acknowledgments
+
+- Original project: [Cluster API](https://github.com/kubernetes-sigs/cluster-api)
+- Inspired by:
+  - [cluster-api-provider-aws](https://github.com/kubernetes-sigs/cluster-api-provider-aws)
+  - [cluster-api-provider-azure](https://github.com/kubernetes-sigs/cluster-api-provider-azure)
+- Re-implemented with different architecture by: vjranagit
+
+## Links
+
+- [Documentation](./docs)
+- [Architecture Design](./docs/architecture.md)
+- [Provider Development Guide](./docs/provider-development.md)
+- [Issue Tracker](https://github.com/vjranagit/cluster-api/issues)
+
+## ⭐ New Features in This Fork
+
+This fork adds three production-ready features that address major pain points in cluster lifecycle management:
+
+### 🔍 1. Drift Detection & Auto-Remediation
+
+Automatically detect when infrastructure drifts from configuration and optionally remediate:
+
+```bash
+# Detect drift
+provctl drift detect cluster.hcl
+
+# Auto-remediate
+provctl drift remediate cluster.hcl
+
+# Continuous monitoring
+provctl drift watch --interval=5m --auto-remediate cluster.hcl
+```
+
+**Benefits:**
+- Early detection of unauthorized changes
+- Automated compliance enforcement
+- Continuous state validation
+- Categorized by severity (critical/high/medium/low)
+
+[See full drift detection docs](docs/FEATURES.md#1-drift-detection--auto-remediation)
+
+### 💰 2. Cost Estimation Engine
+
+Calculate projected infrastructure costs before deployment:
+
+```bash
+# Estimate costs
+provctl cost estimate cluster.hcl
+
+# Compare configurations
+provctl cost diff current.hcl proposed.hcl
+```
+
+**Features:**
+- Pre-deployment cost analysis
+- Multi-cloud pricing (AWS & Azure)
+- Spot instance savings calculations
+- Resource-level cost breakdowns
+- Optimization recommendations
+
+[See full cost estimation docs](docs/FEATURES.md#2-cost-estimation-engine)
+
+### 📸 3. Snapshot & Rollback
+
+Point-in-time state snapshots with fast rollback:
+
+```bash
+# Create snapshot
+provctl snapshot create --description "Before upgrade"
+
+# List snapshots
+provctl snapshot list
+
+# Restore (with dry-run)
+provctl snapshot restore snapshot-20240203-033000 --dry-run
+
+# Actual restore
+provctl snapshot restore snapshot-20240203-033000
+```
+
+**Capabilities:**
+- Automatic pre-upgrade/pre-delete snapshots
+- Fast state restoration
+- Integrity verification with checksums
+- Retention policies and pruning
+- Disaster recovery support
+
+[See full snapshot docs](docs/FEATURES.md#3-snapshot--rollback)
+
+### 📚 Complete Feature Documentation
+
+See [docs/FEATURES.md](docs/FEATURES.md) for comprehensive documentation including:
+- Detailed architecture and implementation
+- Usage examples and CLI commands
+- Configuration options
+- Best practices
+- Integration guides
+- Performance characteristics
+
+---
+
